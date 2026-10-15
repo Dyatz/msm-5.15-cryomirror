@@ -1,16 +1,34 @@
-name: "Mirror CodeLinaro"
+name: "Sync Single Branch Mirror"
 
 on:
-  workflow_dispatch: # Bisa dijalankan manual via tombol
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: "Nama branch CLO yang ingin di-sync"
+        required: true
+        default: "android13-5.15"
+
+permissions:
+  contents: write
 
 jobs:
-  mirror:
+  mirror-branch:
     runs-on: ubuntu-latest
     steps:
-      - name: "Sync Mirror"
+      - name: "Sync Single Branch from CodeLinaro"
         run: |
-          git clone --mirror https://git.codelinaro.org/clo/la/kernel/msm-5.15.git mirror.git
-          cd mirror.git
-          git remote set-url --push origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git push --mirror
+          BRANCH="${{ inputs.branch_name }}"
+          echo "🚀 Memulai clone untuk branch: ${BRANCH}"
+
+          # 1. Clone hanya 1 branch spesifik
+          git clone -b "${BRANCH}" --single-branch --depth=1 https://git.codelinaro.org/clo/la/kernel/msm-5.15.git repo_dir
+
+          cd repo_dir
+
+          # 2. Konfigurasi remote origin ke repositori GitHub ini
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
+          # 3. Push branch ke GitHub
+          echo "📤 Mem-push branch ke repositori GitHub..."
+          git push -u -f origin "${BRANCH}"
           
