@@ -6,7 +6,7 @@ on:
       branch_name:
         description: "Nama branch CLO yang ingin di-sync"
         required: true
-        default: "android13-5.15"
+        default: "kernel.lnx.5.15.r1-rel"
 
 permissions:
   contents: write
@@ -18,10 +18,10 @@ jobs:
       - name: "Sync Single Branch from CodeLinaro"
         run: |
           BRANCH="${{ inputs.branch_name }}"
-          echo "🚀 Memulai clone untuk branch: ${BRANCH}"
+          echo "📄 Memulai clone untuk branch: ${BRANCH}"
 
           # 1. Clone hanya 1 branch spesifik
-          git clone -b "${BRANCH}" --single-branch --depth=1 https://git.codelinaro.org/clo/la/kernel/msm-5.15.git repo_dir
+          git clone -b "${BRANCH}" --single-branch https://git.codelinaro.org/clo/la/kernel/msm-5.15.git repo_dir
 
           cd repo_dir
 
