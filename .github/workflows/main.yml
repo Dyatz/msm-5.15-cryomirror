@@ -1,0 +1,16 @@
+name: "Mirror CodeLinaro"
+
+on:
+  workflow_dispatch: # Bisa dijalankan manual via tombol
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Sync Mirror"
+        run: |
+          git clone --mirror https://git.codelinaro.org/clo/la/kernel/msm-5.15.git mirror.git
+          cd mirror.git
+          git remote set-url --push origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push --mirror
+          
